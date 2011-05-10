@@ -11,7 +11,7 @@ import javax.swing.*;
  * Bei einer Veraenderung werden diese Elemente auf die neue Position gesetzt und der Rest
  * mit den festen Feldern gefuellt.
  * 
- * blubb
+ * blubbbb
  *  
  * @author Nicolai Ommer 
  * @version 20.10.08
