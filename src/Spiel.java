@@ -21,6 +21,7 @@ import javax.swing.*;
  * Validatecode, der sich aus dem Code aus der Level-Klasse und einem neuen Code, der sich von den Schritten ableitet,
  * zusammensetzt.
  * Ausserdem werden hier die Schritte gezaehlt.
+ * blubb
  * 
  * @author Nicolai Ommer
  * @version 24.10.08
