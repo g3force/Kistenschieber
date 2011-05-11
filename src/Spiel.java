@@ -80,6 +80,7 @@ public class Spiel implements KeyListener
 	public void reloadLevel()
 	{
 		ladeLevel(levelchooser.getAktuellesLevel());
+		tastenSperren = false;
 	}
 		
 	/**
@@ -202,6 +203,7 @@ public class Spiel implements KeyListener
 		oberf.menueEintrag("Alle Erfolge zuruecksetzen",mnOptionen,new OptionenErfZurueckListener());
 		// Aendern von "Zeige Loesung (L)" muss auch unter ladeLevel geaendert werden!
 		oberf.menueEintrag("Zeige Loesung (L)",mnOptionen,new OptionenLoesungzeigen());
+		oberf.menueEintrag("Bot / KI (B)",mnOptionen,new OptionenBot());
 		oberf.menueEintrag("Spiel",mnHilfe,new InfoSpielListener());
 		oberf.menueEintrag("Level",mnHilfe,new InfoLevelListener());
 	}
@@ -559,6 +561,19 @@ public class Spiel implements KeyListener
     }    
     
     /**
+     * Beobachte den Menue-Eintrag Optionen->Bot / KI und fuere entsprechende Aktionen aus.
+     * Das Level wird mit hilfe einer KI automatisch geloest.
+     */
+    class OptionenBot implements ActionListener
+    {
+        public void actionPerformed(ActionEvent event)
+        {
+        	fehlerAusgeben("Menue: Optionen->Bot");
+        	activateBot();
+        }
+    }  
+    
+    /**
      * Beobachte den Menue-Eintrag Info->Spiel und fuere entsprechende Actionen aus.
      */
     class InfoSpielListener implements ActionListener
@@ -649,10 +664,22 @@ public class Spiel implements KeyListener
 				System.out.println("L gedrueckt.");
 				loesungZeigen();
 			}
+			else if(arg0.getKeyCode() == KeyEvent.VK_B) {
+				System.out.println("B gedrueckt.");
+				activateBot();
+			}
 		}
 	}
     
-    /**
+    public void activateBot() {
+		// TODO
+		tastenSperren = true;
+		Bot bot = new Bot(this,spielfeld);
+		bot.run();
+		tastenSperren = false;
+	}
+
+	/**
 	 * Wandel angegebene Zahl in ein neues Zahlensystem um.
 	 * Wenn fuer div eine groessere Zahl als 10 eingegeben wird,
 	 * erhaelt man keine gueltigen Zahlen mehr.
