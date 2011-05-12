@@ -36,6 +36,7 @@ public class Spiel implements KeyListener
 	private Spielfeld 			spielfeld; // aktuelle Sammlung aller Felder
 	private LevelChooser 		levelchooser; // lade ein Level aus einer Datei
 	private LoesungZeigen		loesungZeigen; // Dialog zur Steuerung der Loesungsvorschau
+	private Bot 				bot; // KI zum automatischen loesen
 	private int 				schritte; // zaehle Schritte zur aktuellen Anzeige und zum speichern bei Gewinn
 	private boolean				tastenSperren; // legt fest, ob man die Figur bewegen darf oder nicht
 	/**
@@ -64,6 +65,7 @@ public class Spiel implements KeyListener
 		schrittSpeicherAlteKiste = new ArrayList<Point>();
 		schrittSpeicherNeueKiste = new ArrayList<Point>();
 		schrittSpeicherFigur = new ArrayList<Point>();
+		bot = new Bot(this,spielfeld);
 		tastenSperren = false;
 		
 		oberf.addKeyListener(this);
@@ -98,8 +100,9 @@ public class Spiel implements KeyListener
 	 * @param waag	-1 fuer links, 1 fuer rechts
 	 * @param senk	-1 fuer hoch, 1 fuer runter
 	 */
-	public void bewegen(int waag, int senk)
+	public boolean bewegen(int waag, int senk)
 	{
+		boolean moved=false;
 		if(spielfeld.valid()) {
 			Point figPos = spielfeld.getFigPos();
 			Point neuePos = new Point(figPos.x + waag,figPos.y + senk);
@@ -125,6 +128,7 @@ public class Spiel implements KeyListener
 						spielfeld.verschiebeKiste(neuePos,neuePos2);
 						spielfeld.verschiebeFigPos(figPos,neuePos);
 						schritte = schritte + 1;
+						moved=true;
 					}
 				}
 				else if(neuesFeld == ' '
@@ -137,6 +141,8 @@ public class Spiel implements KeyListener
 					
 					spielfeld.verschiebeFigPos(figPos,neuePos);
 					schritte = schritte + 1;
+					moved=true;
+					
 				}
 				else {
 					fehlerAusgeben("Irgendwas stimmt nicht in bewegen()");
@@ -147,6 +153,7 @@ public class Spiel implements KeyListener
 				this.gewonnen();
 			}
 		}
+		return moved;
 	}
 
 	/**
@@ -428,7 +435,7 @@ public class Spiel implements KeyListener
 			schrittSpeicherFigur.remove(schrittSpeicherFigur.size() - 1);
 			
 			oberf.reloadSpielfeld(spielfeld.build(),levelchooser.getAktuellesLevel(),schritte);
-			
+			fehlerAusgeben("Schritt zurück");
 		}
 	}
 	
@@ -668,15 +675,24 @@ public class Spiel implements KeyListener
 				System.out.println("B gedrueckt.");
 				activateBot();
 			}
+			else if(arg0.getKeyCode() == KeyEvent.VK_S) {
+				System.out.println("S gedrueckt.");
+				if(bot.isRunning()) bot.step();
+			}
 		}
 	}
     
     public void activateBot() {
 		// TODO
-		tastenSperren = true;
-		Bot bot = new Bot(this,spielfeld);
-		bot.run();
-		tastenSperren = false;
+    	if(bot.isRunning()) {
+    		bot.stop();
+    	}
+    	else {
+    		tastenSperren = true;
+    		bot.start();
+    		tastenSperren = false;
+    	}
+		
 	}
 
 	/**
