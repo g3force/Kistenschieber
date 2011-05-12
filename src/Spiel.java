@@ -201,6 +201,7 @@ public class Spiel implements KeyListener
 	{
 		JMenu mnSpiel = new JMenu("Spiel");
 		JMenu mnOptionen = new JMenu("Optionen");
+		JMenu mnBot = new JMenu("Bot");
 		JMenu mnHilfe = new JMenu("Info");
 		
 		oberf.menueEintrag("Neu (N)",mnSpiel,new SpielNeuListener());
@@ -210,9 +211,11 @@ public class Spiel implements KeyListener
 		oberf.menueEintrag("Alle Erfolge zuruecksetzen",mnOptionen,new OptionenErfZurueckListener());
 		// Aendern von "Zeige Loesung (L)" muss auch unter ladeLevel geaendert werden!
 		oberf.menueEintrag("Zeige Loesung (L)",mnOptionen,new OptionenLoesungzeigen());
-		oberf.menueEintrag("Bot / KI (B)",mnOptionen,new OptionenBot());
+		oberf.menueEintrag("(de)aktivieren (B)",mnBot,new BotActivate());
+		oberf.menueEintrag("Schritt (S)",mnBot,new BotStep());
 		oberf.menueEintrag("Spiel",mnHilfe,new InfoSpielListener());
 		oberf.menueEintrag("Level",mnHilfe,new InfoLevelListener());
+		oberf.setMenuItemEnabled("Schritt (S)", false);
 	}
 	
 	/**
@@ -568,17 +571,30 @@ public class Spiel implements KeyListener
     }    
     
     /**
-     * Beobachte den Menue-Eintrag Optionen->Bot / KI und fuere entsprechende Aktionen aus.
+     * Beobachte den Menue-Eintrag Bot->(de)aktivieren und fuere entsprechende Aktionen aus.
      * Das Level wird mit hilfe einer KI automatisch geloest.
      */
-    class OptionenBot implements ActionListener
+    class BotActivate implements ActionListener
     {
         public void actionPerformed(ActionEvent event)
         {
-        	fehlerAusgeben("Menue: Optionen->Bot");
+        	fehlerAusgeben("Menue: Bot->(de)aktivieren");
         	activateBot();
         }
-    }  
+    }     
+    
+    /**
+     * Beobachte den Menue-Eintrag Bot->Schritt und fuere entsprechende Aktionen aus.
+     * Einen Schritt des Bots ausloesen
+     */
+    class BotStep implements ActionListener
+    {
+        public void actionPerformed(ActionEvent event)
+        {
+        	fehlerAusgeben("Menue: Bot->Schritt");
+        	if(bot.isRunning()) bot.step();
+        }
+    } 
     
     /**
      * Beobachte den Menue-Eintrag Info->Spiel und fuere entsprechende Actionen aus.
@@ -683,13 +699,14 @@ public class Spiel implements KeyListener
 	}
     
     public void activateBot() {
-		// TODO
     	if(bot.isRunning()) {
     		bot.stop();
+    		oberf.setMenuItemEnabled("Schritt (S)", false);
     	}
     	else {
     		tastenSperren = true;
     		bot.start();
+    		oberf.setMenuItemEnabled("Schritt (S)", true);
     		tastenSperren = false;
     	}
 		
