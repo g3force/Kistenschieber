@@ -20,6 +20,7 @@ public class Level
 	private char[][] festesFeld, kistenPos, punktPos, figPos;
 	private Icons icons;
 	private LevelInfos infos;
+	private int anzKisten;
 	
 	//Datenfeld, das angibt, ob alles korrekt ist
 	private boolean valid = false;
@@ -79,6 +80,7 @@ public class Level
 		}
 		fehlerAusgeben("Es gibt " + kisten + " Kisten.");
 		fehlerAusgeben("Es gibt " + punkte + " Punkte.");
+		anzKisten=kisten;
 		if(kisten == punkte) {
 			fehlerAusgeben("Anzahl Kisten und Punkte stimmen ueberein.");
 			return true;
@@ -181,8 +183,17 @@ public class Level
 	{
 		return icons;
 	}
-    
-    /**
+	
+	/**
+	 * Anzahl der vorhanden Kisten im Level
+	 * 
+	 * @return Anzahl Kisten
+	 */
+    public int getAnzKisten() {
+		return anzKisten;
+	}
+
+	/**
      * Gib den Wert des Info-Schluessels zurueck.
      * 	Beispiel: infoname=version -> "1.0"
      * 

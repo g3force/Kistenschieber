@@ -9,15 +9,22 @@
 public class Direction {
 	private int x=0;
 	private int y=0;
-	private int i=0;
+	private int dir=0;
 	private int rotation=0;
 	
-	public Direction(int new_i) {
-		setI(new_i);		
+	public Direction(int dir) {
+		setDir(dir);		
 	}
 	
-	public void incRotation() {
+	public void incDir() {
+		setDir(dir%4+1);
 		rotation++;
+	}
+	
+	public void decDir() {
+		dir--;
+		if(dir<=0) dir=4;
+		setDir(dir);
 	}
 
 	public int getX() {
@@ -28,8 +35,8 @@ public class Direction {
 		return y;
 	}
 
-	public int getI() {
-		return i;
+	public int getDir() {
+		return dir;
 	}
 
 	public int getRotation() {
@@ -40,17 +47,32 @@ public class Direction {
 		this.rotation = rotation;
 	}
 
-	public void setI(int new_i) {
-		if(new_i>=0 && new_i<5) {
-			i=new_i;
+	public void setDir(int dir) {
+		if(dir>=0 && dir<5) {
+			this.dir=dir;
 			x=0;
 			y=0;
-			switch(i) {
+			switch(dir) {
 			case 1: y=-1; break;
 			case 2: x=1; break;
 			case 3: y=1; break;
 			case 4: x=-1; break;
 			}
+		}
+		else {
+			fehlerAusgeben("passed dir is too high/low");
+		}
+	}
+	
+	/**
+	 * Wenn DEBUGMODUS=true, dann werden Nachrichten zur Kontrolle des Quellcodes ausgegeben.
+	 * 
+	 * @param text	Der Text, der ausgegeben werden soll.
+	 */
+	private void fehlerAusgeben(String text)
+	{
+		if(Spiel.DEBUGMODUS) {
+			System.out.println("Direction: " + text);
 		}
 	}
 }

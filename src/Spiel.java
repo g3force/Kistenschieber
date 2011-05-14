@@ -30,7 +30,7 @@ public class Spiel implements KeyListener
 	// DEBUGMODUS: wenn true, dann werden Ausgaben zur leichteren Fehlerbehandlung ausgegeben
 	public static final boolean DEBUGMODUS=true;
 	// VERSION: die aktuelle Version, die in der Spiel-Info angezeigt wird.
-	public static final String VERSION = new String("0.9");
+	public static final String VERSION = new String("0.91");
 	public static final String TITEL = new String("Kistenschieber");
 	private Oberflaeche 		oberf; // Fenster, auf dem die Spielflaeche angezeigt wird
 	private Spielfeld 			spielfeld; // aktuelle Sammlung aller Felder
@@ -612,7 +612,7 @@ public class Spiel implements KeyListener
         			"Es ist egal, welche Kiste auf welchem Punkt steht.\n" +
         			"Mit Hilfe des Menues oder den im Menue in Klammern angegebenen Buchstaben " +
         			"koennen entsprechende Ereignisse wie neues Spiel oder Schritt Rueckgaengig ausgefuehrt werden.\n" +
-        			"Dies ist ein uraltes Spiel, und dessen urspruenglicher Name ist Sokoban.\n\n" +
+        			"Dieses Kultspiel ist unter anderem auch unter dem Namen Sokoban bekannt.\n\n" +
         			"Dieses Spiel ist in Form eines Projektes bei einem Praktikum bei der " +
         			"Deutschen Telekom entstanden.",
         			"Spiel-Info",

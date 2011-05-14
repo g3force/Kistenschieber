@@ -19,36 +19,80 @@ public class Bot {
 	}
 	
 	public void step() {
-		dir=(dir)%4+1;
-		getLastPath().setI(dir);
-		fehlerAusgeben("Try moving in dir="+dir);
+		getLastPath().incDir();
 		
-		if(!spiel.bewegen(getLastPath().getX(), getLastPath().getY())) {
-			fehlerAusgeben("Could not move. Performed rotations="+getLastPath().getRotation());
-
-			getLastPath().incRotation();
+		if(deadEnd()) {
+			debug("Dead End.");
+			if(path.size()>0) {
+				path.remove(path.size()-1);
+			}
+			else {
+				debug("ACHTUNG! Das Level scheint unloesbar zu sein...");
+			}
+			spiel.schrittRueckgaengig();
+		}
+		else {
 			
-			if(getLastPath().getRotation()<4) {
+			if(getLastPath().getRotation()<=4) {
 				// If direction is where figure came from (1<->3 bzw. 2<->4)
-				if(Math.abs(path.get(path.size()-2).getI()-dir)==2) {
-					fehlerAusgeben("Back Direction. dir="+dir);
+				if(path.size()>1 && Math.abs(path.get(path.size()-2).getDir()-getLastPath().getDir())==2) {
+					debug("Back Direction. dir="+getLastPath().getDir());
+					step();
 				}
 				else {
-					//step();	
+					debug("Try moving in dir="+getLastPath().getDir());
+					
+					if(spiel.bewegen(getLastPath().getX(), getLastPath().getY())) {
+						path.add(new Direction(getLastPath().getDir()));
+						debug("Path added. dir="+getLastPath().getDir());
+					}
+					else {
+						debug("Could not move. Performed rotations="+getLastPath().getRotation());
+						step();
+					}
 				}
 			}
 			else {
 				path.remove(path.size()-1);
 				spiel.schrittRueckgaengig();				
-				fehlerAusgeben("Backtracked. Next dir="+dir);
+				debug("Backtracked. Current dir="+getLastPath().getDir());
 			}
-			
 		}
-		else {
-			path.add(new Direction(dir-1));
-			dir--;
-			fehlerAusgeben("path added. dir="+dir);
+	}
+	
+	public boolean deadEnd() {
+		char[][] felder = spielfeld.getAlleFelder();
+		int kistenFound=0;
+		
+		for(int i=0; i<spielfeld.getLevel().getlevelbreite() && 
+		kistenFound!=spielfeld.getLevel().getAnzKisten();i++) {
+			for(int j=0; j<spielfeld.getLevel().getlevelhoehe() && 
+			kistenFound!=spielfeld.getLevel().getAnzKisten();j++) {
+				if(felder[i][j]=='$' || felder[i][j]=='*') {
+					kistenFound++;
+					boolean free=true;
+					for(int a=1;a<5;a++) {
+						Direction kDir=new Direction(a);
+						if(i+kDir.getY()>=0 && i+kDir.getY()<spielfeld.getLevel().getlevelbreite() &&
+								j+kDir.getX()>=0 && j+kDir.getX()<spielfeld.getLevel().getlevelhoehe() &&
+								(felder[i+kDir.getX()][j+kDir.getY()]=='.' || felder[i+kDir.getX()][j+kDir.getY()]==' ' ||
+								felder[i+kDir.getX()][j+kDir.getY()]=='@' || felder[i+kDir.getX()][j+kDir.getY()]=='+')) {
+							// Field is free
+							free=true;
+						}
+						else {
+							// Field is not free
+							if(!free) {
+								debug("Dead End: kDir="+kDir.getDir()+" kiste(i,j)=("+i+","+j+")");
+								return true;
+							}
+							free=false;
+						}
+					}
+				}
+			}
 		}
+		return false;
 	}
 	
 	public void stop() {
@@ -76,7 +120,7 @@ public class Bot {
 	 * 
 	 * @param text	Der Text, der ausgegeben werden soll.
 	 */
-	private void fehlerAusgeben(String text)
+	private void debug(String text)
 	{
 		if(Spiel.DEBUGMODUS) {
 			System.out.println("Bot: " + text);
