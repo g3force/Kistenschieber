@@ -48,7 +48,7 @@ public class Direction {
 	}
 
 	public void setDir(int dir) {
-		if(dir>=0 && dir<5) {
+		if(dir>=0 && dir<6) {
 			this.dir=dir;
 			x=0;
 			y=0;
@@ -57,11 +57,21 @@ public class Direction {
 			case 2: x=1; break;
 			case 3: y=1; break;
 			case 4: x=-1; break;
+			case 5: y=-1; break;
 			}
 		}
 		else {
 			fehlerAusgeben("passed dir is too high/low");
 		}
+	}
+	
+	public boolean samePos(Direction direction) {
+		if(direction.getX()==getX() && direction.getY()==getY()) return true;
+		return false;
+	}
+	
+	public String toString() {
+		return "X="+getX()+" Y="+getY()+" dir="+getDir();		
 	}
 	
 	/**

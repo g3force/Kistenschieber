@@ -99,10 +99,11 @@ public class Spiel implements KeyListener
 	 * 
 	 * @param waag	-1 fuer links, 1 fuer rechts
 	 * @param senk	-1 fuer hoch, 1 fuer runter
+	 * @return moved (0: not moved, 1: moved, 2: moved with box
 	 */
-	public boolean bewegen(int waag, int senk)
+	public int bewegen(int waag, int senk)
 	{
-		boolean moved=false;
+		int moved=0;
 		if(spielfeld.valid()) {
 			Point figPos = spielfeld.getFigPos();
 			Point neuePos = new Point(figPos.x + waag,figPos.y + senk);
@@ -128,7 +129,7 @@ public class Spiel implements KeyListener
 						spielfeld.verschiebeKiste(neuePos,neuePos2);
 						spielfeld.verschiebeFigPos(figPos,neuePos);
 						schritte = schritte + 1;
-						moved=true;
+						moved=2;
 					}
 				}
 				else if(neuesFeld == ' '
@@ -141,7 +142,7 @@ public class Spiel implements KeyListener
 					
 					spielfeld.verschiebeFigPos(figPos,neuePos);
 					schritte = schritte + 1;
-					moved=true;
+					moved=1;
 					
 				}
 				else {
@@ -405,6 +406,7 @@ public class Spiel implements KeyListener
 		schrittSpeicherAlteKiste.add(null);
 		schrittSpeicherNeueKiste.add(null);
 		schrittSpeicherFigur.add(spielfeld.getFigPos());
+		bot = new Bot(this,spielfeld);
 		if(spielfeld.getLevel().getInfos("loesungsweg").equals("")) {
 			oberf.setMenuItemEnabled("Zeige Loesung (L)", false);
 		}
@@ -695,6 +697,12 @@ public class Spiel implements KeyListener
 				System.out.println("S gedrueckt.");
 				if(bot.isRunning()) bot.step();
 			}
+			else if(arg0.getKeyCode() == KeyEvent.VK_A) {
+				System.out.println("A gedrueckt.");
+				if(bot.isRunning()) {
+					bot.step();
+				}
+			}
 		}
 	}
     
@@ -711,6 +719,10 @@ public class Spiel implements KeyListener
     	}
 		
 	}
+    
+    public Point getLastFigPos(int i) {
+    	return schrittSpeicherFigur.get(schrittSpeicherFigur.size()-1-i);
+    }
 
 	/**
 	 * Wandel angegebene Zahl in ein neues Zahlensystem um.
@@ -770,5 +782,17 @@ public class Spiel implements KeyListener
 		if(Spiel.DEBUGMODUS) {
 			System.out.println("Spiel: " + text);
 		}
+	}
+
+	public LevelChooser getLevelchooser() {
+		return levelchooser;
+	}
+
+	public void setLevelchooser(LevelChooser levelchooser) {
+		this.levelchooser = levelchooser;
+	}
+
+	public Spielfeld getSpielfeld() {
+		return spielfeld;
 	}
 }

@@ -22,7 +22,6 @@ import javax.swing.*;
  */
 public class LevelChooser implements ActionListener
 {
-	private static final long serialVersionUID = -7714208602809133949L;
 	private LevelLader 	levelLader; // zum pruefen der gueltigkeit eines Levels
 	// speichert, welches Level als letztes geladen wurde und somit auch auf der Oberflaeche aktiv ist
 	private String 		aktuellesLevel;
